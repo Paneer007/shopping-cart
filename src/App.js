@@ -1,23 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
-
+import {Link,BrowserRouter as Router,Route,Routes, Navigate } from 'react-router-dom'
+import axios from 'axios';
+import Home from './components/Home';
+import Catalog from './components/Catalog';
+import Checkout from './components/Checkout';
+import { useEffect, useState } from 'react';
+import CatalogItemView from './components/CatalogItemView';
 function App() {
+  const RandomPrice =()=> Math.floor(Math.random() * 9000) + 1000
+  const [imageList,setImageList]=useState([])
+  const [userShoppingCart,setUserShoppingCart]=useState({})
+  useEffect(()=>{
+    const fetchData =async()=>{
+        const response1 = await axios.get('https://api.unsplash.com/search/photos/?client_id=gH-fpaQSEHTHvDjtKznfrbkVetOrxR8YkWqEt02uxK0&query=art&per_page=50')
+        const response2 = await axios.get('https://api.unsplash.com/search/photos/?client_id=gH-fpaQSEHTHvDjtKznfrbkVetOrxR8YkWqEt02uxK0&query=art&per_page=50')
+        let finalSetOfImages=[...response1.data.results,...response2.data.results]
+        finalSetOfImages=finalSetOfImages.map(x=>Object.assign(x,{price:RandomPrice()}))
+        console.log(finalSetOfImages)
+        setImageList(finalSetOfImages)
+    }
+    fetchData()
+  },[])
+  console.log(imageList)
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Router>
+        <div>
+          <Link to='/'>Home</Link>
+          <input placeholder="Enter something to search"></input>
+          <div>
+            <Link to='/catalog'>Catalog</Link>
+            <Link to='/cart'>Cart</Link>  
+          </div>
+          
+        </div>
+        <Routes>
+          <Route path="/" element={<Navigate replace to='/home'/>}/>
+          <Route path="/home" element={<Home imageList={imageList} />}/>
+          <Route path='/cart' element={<Checkout item={imageList} userItem={userShoppingCart}/>}/>
+          <Route path='/catalog' element={<Catalog imageList={imageList}/>}/>
+          {imageList.length===0?console.log('wait'):imageList.map(x=><Route path={`/catalog/${x.id}`} element={<CatalogItemView item={x} userCart={userShoppingCart} setUserCart={setUserShoppingCart}/>}/>)}
+        </Routes>
+        
+      </Router>
     </div>
   );
 }
