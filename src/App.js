@@ -9,6 +9,7 @@ function App() {
   const RandomPrice =()=> Math.floor(Math.random() * 9000) + 1000
   const [imageList,setImageList]=useState([])
   const [userShoppingCart,setUserShoppingCart]=useState({})
+  const [countOfItem,setCountOfItem]=useState(0)
   useEffect(()=>{
     const fetchData =async()=>{
         const response1 = await axios.get('https://api.unsplash.com/search/photos/?client_id=gH-fpaQSEHTHvDjtKznfrbkVetOrxR8YkWqEt02uxK0&query=art&per_page=50')
@@ -20,6 +21,9 @@ function App() {
     }
     fetchData()
   },[])
+  useEffect(()=>{
+    setCountOfItem(userShoppingCart.length===undefined?0:userShoppingCart.length)
+  },[userShoppingCart])
   return (
     <div className="App">
       <Router>
@@ -28,7 +32,7 @@ function App() {
           <input placeholder="Enter something to search"></input>
           <div> 
             <Link to='/catalog'>Catalog</Link>
-            <Link to='/cart' >Cart</Link>  
+            <Link to='/cart' >Cart-{countOfItem}</Link>  
           </div>
           
         </div>
