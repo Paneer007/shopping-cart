@@ -12,6 +12,7 @@ const HomeBackGroundImage=({count,imageData})=>{
 const ImageCarousel=({imageList})=>{
     useEffect(()=>{
         let tempCount=0
+        console.log("Home Page",imageList)
         const swapImage=()=>{
             const images = document.querySelectorAll('.homePageImage')
             for(let i=0;i<images.length;i++){
@@ -26,11 +27,14 @@ const ImageCarousel=({imageList})=>{
                 tempCount++
             }
         }
-        const imageInterval = setInterval(swapImage,1000)    
+        let imageInterval
+        imageInterval = setInterval(swapImage,1000)
+          
         return function cleanup(){
+            console.log('cleaned')
             clearInterval(imageInterval)
         }
-    },[])
+    })
     let count=1
     return(
         <div>
@@ -45,7 +49,8 @@ const ImageCarousel=({imageList})=>{
     )
 }
 const Home=({imageList})=>{
-    const images=imageList.splice(0,10)
+    console.log("Home Page",imageList)
+    const images=imageList.slice(10)
     return(
         <div>
             <div>

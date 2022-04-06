@@ -12,24 +12,23 @@ function App() {
   useEffect(()=>{
     const fetchData =async()=>{
         const response1 = await axios.get('https://api.unsplash.com/search/photos/?client_id=gH-fpaQSEHTHvDjtKznfrbkVetOrxR8YkWqEt02uxK0&query=art&per_page=50')
-        const response2 = await axios.get('https://api.unsplash.com/search/photos/?client_id=gH-fpaQSEHTHvDjtKznfrbkVetOrxR8YkWqEt02uxK0&query=art&per_page=50')
-        let finalSetOfImages=[...response1.data.results,...response2.data.results]
+        let finalSetOfImages=[...response1.data.results]
         finalSetOfImages=finalSetOfImages.map(x=>Object.assign(x,{price:RandomPrice()}))
         console.log(finalSetOfImages)
         setImageList(finalSetOfImages)
+        console.log('f')
     }
     fetchData()
   },[])
-  console.log(imageList)
   return (
     <div className="App">
       <Router>
         <div>
-          <Link to='/'>Home</Link>
+          <Link to='/home'>Home</Link>
           <input placeholder="Enter something to search"></input>
-          <div>
+          <div> 
             <Link to='/catalog'>Catalog</Link>
-            <Link to='/cart'>Cart</Link>  
+            <Link to='/cart' >Cart</Link>  
           </div>
           
         </div>
@@ -37,7 +36,7 @@ function App() {
           <Route path="/" element={<Navigate replace to='/home'/>}/>
           <Route path="/home" element={<Home imageList={imageList} />}/>
           <Route path='/cart' element={<Checkout item={imageList} userItem={userShoppingCart}/>}/>
-          <Route path='/catalog' element={<Catalog imageList={imageList}/>}/>
+          <Route path='/catalog' element={<Catalog imageList={imageList} userCart={userShoppingCart} setUserCart={setUserShoppingCart}/>}/>
           {imageList.length===0?console.log('wait'):imageList.map(x=><Route path={`/catalog/${x.id}`} element={<CatalogItemView item={x} userCart={userShoppingCart} setUserCart={setUserShoppingCart}/>}/>)}
         </Routes>
         
